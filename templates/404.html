@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Página no encontrada</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Análisis de Temperaturas</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active marcado"><a class="nav-link" href="/" onclick="return false;">Inicio</a></li>
+                    <li class="nav-item active marcado"><a class="nav-link" href="/secret" onclick="return false;">Secret</a></li>
+                    <li class="nav-item active marcado"><a class="nav-link" href="/prediccion" onclick="return false;">Predicción</a></li>
+                    <li class="nav-item active marcado"><a class="nav-link" href="/evaluaciones" onclick="return false;">Evaluaciones</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container mt-4">
+        <h1 class="text-center text-danger">¡ERROR 404!</h1>
+        <p class="text-center">Lo sentimos, no podemos acceder a la página que intentas ver. </p>
+        <p class="text-center">La página está teniendo problemas al intentar cargar la ruta.</p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary mt-3">Volver al inicio</a>
+    </div>
+
+    <script>
+        // Evitar que se navegue a las páginas de los enlaces
+        const enlaces = document.querySelectorAll('.nav-item .nav-link');
+        enlaces.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault(); // Evitar navegación
+                alert("Error: Página corrupta.");
+            });
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

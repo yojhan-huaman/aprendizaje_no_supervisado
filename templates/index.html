@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicación de Análisis de Temperaturas</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <!-- Encabezado y navegación -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Análisis de Temperaturas</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegación">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active"><a class="nav-link" href="/">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/secret">Secret</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/prediccion">Predicción</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/evaluaciones">Evaluaciones</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="container mt-5">
+        <h1 class="text-center mb-4">Generador y Evaluador de Temperaturas</h1>
+
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="csv_file">Subir archivo CSV (opcional):</label>
+                <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv">
+            </div>
+
+            <div class="form-group">
+                <button type="button" class="btn btn-success" id="procesarCSV">Procesar CSV</button>
+            </div>
+
+            <div class="form-group">
+                <label for="cantidad">Cantidad de datos:</label>
+                <input type="number" class="form-control" id="cantidad" name="cantidad" value="{{ cantidad }}" min="1">
+            </div>
+
+            <div class="form-group">
+                <label for="porcentaje">Porcentaje de anomalías:</label>
+                <input type="number" class="form-control" id="porcentaje" name="porcentaje" value="{{ porcentaje }}"
+                    step="0.1" min="0" max="100">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Procesar Temperaturas</button>
+        </form>
+
+        <div id="csvPreview" class="mt-5"></div>
+
+        <div id="resultadosGenerados">
+            {% if tabla %}
+            <section class="mt-5">
+                <h3>Resultados</h3>
+                <div class="table-responsive">
+                    {{ tabla | safe }}
+                </div>
+                <a href="{{ url_for('descargar_csv') }}" class="btn btn-secondary mt-3">Descargar CSV</a>
+            </section>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer>
+        <p>&copy; 2025 - Sistema de Análisis de Temperaturas</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('procesarCSV').addEventListener('click', function () {
+            const fileInput = document.getElementById('csv_file');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Por favor, selecciona un archivo CSV primero.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const contenido = e.target.result;
+                const filas = contenido.split('\n').map(fila => fila.split(','));
+
+                let tablaHTML = '<h3>Vista previa del CSV</h3><div class="table-responsive"><table class="table table-bordered table-striped"><thead><tr>';
+                
+                filas[0].forEach(col => {
+                    tablaHTML += `<th>${col.trim()}</th>`;
+                });
+                tablaHTML += '</tr></thead><tbody>';
+
+                for (let i = 1; i < filas.length; i++) {
+                    if (filas[i].length === 1 && filas[i][0].trim() === '') continue;
+                    tablaHTML += '<tr>';
+                    filas[i].forEach(col => {
+                        tablaHTML += `<td>${col.trim()}</td>`;
+                    });
+                    tablaHTML += '</tr>';
+                }
+
+                tablaHTML += '</tbody></table></div>';
+
+                document.getElementById('csvPreview').innerHTML = tablaHTML;
+                document.getElementById('csvPreview').style.display = 'block';
+
+                const resultados = document.getElementById('resultadosGenerados');
+                if (resultados) {
+                    resultados.style.display = 'none';
+                }
+            };
+
+            reader.readAsText(file);
+        });
+    </script>
+</body>
+</html>

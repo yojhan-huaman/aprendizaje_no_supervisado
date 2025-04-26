@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicción - Modelo No Supervisado</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Encabezado -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="/">Análisis de Temperaturas</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/secret">Secret</a></li>
+                    <li class="nav-item active"><a class="nav-link" href="/prediccion">Predicción</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/evaluaciones">Evaluaciones</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="container mt-5">
+        <div class="text-center mb-4">
+            <h1 class="display-5">Evaluar Temperatura</h1>
+            <p class="lead">Determina si una temperatura es una anomalía según el modelo Isolation Forest.</p>
+        </div>
+
+        {% if error %}
+            <div class="alert alert-danger text-center">{{ error }}</div>
+        {% endif %}
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="valor">Temperatura (°C):</label>
+                        <input type="number" step="any" class="form-control" id="valor" name="valor" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Evaluar</button>
+                </form>
+            </div>
+        </div>
+
+        {% if valor is not none %}
+            <div class="alert alert-info text-center">
+                <h5>Resultado de la Evaluación</h5>
+                <p><strong>Valor Introducido:</strong> {{ valor }}°C</p>
+                <p><strong>Anomalía:</strong> {{ es_anomalia }}</p>
+            </div>
+        {% endif %}
+
+        {% if grafico_url %}
+            <div class="text-center">
+                <h4>Gráfico de Evaluación</h4>
+                <img src="{{ grafico_url }}" alt="Gráfico de Evaluación" class="img-fluid rounded shadow">
+            </div>
+        {% endif %}
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Volver al Inicio</a>
+        </div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer>
+        <p>&copy; 2025 - Sistema de Análisis de Temperaturas</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
